@@ -1,0 +1,3 @@
+C:/Users/Asus/Desktop/logs/build/CMakeFiles/LogAnalyzer.dir
+C:/Users/Asus/Desktop/logs/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/Asus/Desktop/logs/build/CMakeFiles/ZERO_CHECK.dir
