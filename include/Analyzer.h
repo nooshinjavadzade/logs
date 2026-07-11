@@ -23,6 +23,7 @@ private:
     std::unordered_map<std::string, uint64_t> endpointCounts;
     static uint32_t parseIpToUint32(const std::string& ipStr);
     uint64_t hourlyRequests[24] = {0};
+    uint64_t hourly5xxRequests[24] = {0};
     
     
 };

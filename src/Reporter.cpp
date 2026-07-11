@@ -72,3 +72,41 @@ void Reporter::printSuspiciousActivity(const Analyzer& analyzer) {
         cout << "No suspicious brute-force login attempts detected.\n";
     }
 }
+
+
+void Reporter::print5xxSpikeDetection(const Analyzer& analyzer) {
+    cout << "\n=== Automated 5xx Error Spike Detection ===\n";
+    
+    uint64_t total5xx = 0;
+    for (int i = 0; i < 24; i++) {
+        total5xx += analyzer.hourly5xxRequests[i];
+    }
+    
+    if (total5xx == 0) {
+        cout << "No 5xx errors detected. Server stability is nominal.\n";
+        return;
+    }
+    
+    double average5xx = (double)total5xx / 24.0;
+    bool spikeFound = false;
+    
+    for (int i = 0; i < 24; i++) {
+        if (analyzer.hourly5xxRequests[i] > (average5xx * 3.0) && analyzer.hourly5xxRequests[i] > 5) {
+            double hourErrorRate = 0.0;
+            if (analyzer.hourlyRequests[i] > 0) {
+                hourErrorRate = (double)analyzer.hourly5xxRequests[i] / analyzer.hourlyRequests[i] * 100.0;
+            }
+            
+            cout << "[CRITICAL SPIKE] Server 5xx anomaly detected at interval: " 
+                 << setfill('0') << setw(2) << i << ":00 - " << setw(2) << i << ":59\n"
+                 << "  -> 5xx Count: " << analyzer.hourly5xxRequests[i] << " (Global Hourly Avg: " << fixed << setprecision(1) << average5xx << ")\n"
+                 << "  -> Hourly 5xx Error Rate: " << fixed << setprecision(2) << hourErrorRate << "%\n\n";
+                 
+            spikeFound = true;
+        }
+    }
+    
+    if (!spikeFound) {
+        cout << "5xx errors are distributed evenly. No sudden spikes or bursts detected.\n";
+    }
+}

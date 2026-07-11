@@ -34,6 +34,9 @@ void Analyzer::processEntry(const LogEntry& entry) {
     
     if (entry.status >= 400 && entry.status < 600) {
         errorRequests++;
+        if (entry.hour >= 0 && entry.hour < 24) {
+        hourly5xxRequests[entry.hour]++; 
+    }
     }
     
     if (entry.hour >= 0 && entry.hour < 24) {
