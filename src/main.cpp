@@ -3,6 +3,7 @@
 #include <string>
 #include "Analyzer.h"
 #include "Reporter.h"
+#include "LogParser.h" 
 
 using namespace std;
 
@@ -38,27 +39,26 @@ int main(int argc, char* argv[]) {
     }
 
     Analyzer analyzer;
-    analyzer.startClock();
+    analyzer.startClock(); 
 
     string line;
     while (getline(file, line)) {
         if (line.empty()) continue;
 
-        bool isValid = true;
-        LogEntry entry;
+        LogEntry entry; 
         
-
-        if (isValid) {
+        if (LogParser::parse(line, entry)) {
             if (entry.hour >= startHour && entry.hour <= endHour) {
                 analyzer.processEntry(entry);
             }
         } else {
+            // ثبت خطوط معیوب
             analyzer.processInvalidLine();
         }
     }
     file.close();
 
-    analyzer.stopClock();
+    analyzer.stopClock(); 
 
     if (hasTopNCommand) {
         Reporter::printReport(analyzer, topN);
