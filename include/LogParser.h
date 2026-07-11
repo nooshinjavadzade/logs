@@ -1,8 +1,7 @@
 #pragma once
 #include "LogEntry.h"
 
-class LogParser
-{
+class LogParser {
 public:
-    bool parse(const string& line, LogEntry& entry);
+    static bool parse(const string& line, LogEntry& entry);
 };
