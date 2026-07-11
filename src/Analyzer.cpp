@@ -51,3 +51,13 @@ void Analyzer::processEntry(const LogEntry& entry) {
 void Analyzer::processInvalidLine() {
     invalidLines++;
 }
+
+void Analyzer::startClock() {
+    startTimePoint = std::chrono::high_resolution_clock::now();
+}
+
+void Analyzer::stopClock() {
+    auto endTimePoint = std::chrono::high_resolution_clock::now();
+    std::chrono::duration<double, std::milli> duration = endTimePoint - startTimePoint;
+    executionTimeMs = duration.count(); 
+}

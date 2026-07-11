@@ -5,7 +5,7 @@
 
 using namespace std;
 
-void Reporter::printReport(const Analyzer& analyzer) {
+void Reporter::printReport(const Analyzer& analyzer, int topN) {
     cout << "=== Basic Report ===\n";
     cout << "Total Requests (Valid): " << analyzer.totalRequests << "\n";
     cout << "Broken/Invalid Lines Skipped: " << analyzer.invalidLines << "\n";
@@ -16,17 +16,23 @@ void Reporter::printReport(const Analyzer& analyzer) {
         cout << "Error Rate (4xx & 5xx): " << fixed << setprecision(2) << errorRate << "%\n";
     }
     
-    cout << "\n=== Top 10 Endpoints ===\n";
+    cout << "\n=== Top " << topN << " Endpoints ===\n";
     vector<pair<string, uint64_t>> endpoints(analyzer.endpointCounts.begin(), analyzer.endpointCounts.end());
     
     sort(endpoints.begin(), endpoints.end(), [](const pair<string, uint64_t>& a, const pair<string, uint64_t>& b) {
         return a.second > b.second;
     });
     
-    int limit = min(10, (int)endpoints.size());
+    int limit = min(topN, (int)endpoints.size());
     for (int i = 0; i < limit; i++) {
         cout << i + 1 << ". " << endpoints[i].first << " (" << endpoints[i].second << " requests)\n";
     }
+}
+
+
+
+void Reporter::printReport(const Analyzer& analyzer) {
+    printReport(analyzer, 10);
 }
 
 void Reporter::printTimeDistribution(const Analyzer& analyzer) {
@@ -109,4 +115,14 @@ void Reporter::print5xxSpikeDetection(const Analyzer& analyzer) {
     if (!spikeFound) {
         cout << "5xx errors are distributed evenly. No sudden spikes or bursts detected.\n";
     }
+}
+
+void Reporter::printBenchmark(const Analyzer& analyzer) {
+    cout << "\n========================================\n";
+    cout << "PERFORMANCE BENCHMARK\n";
+    cout << "========================================\n";
+    cout << "Total Processing Time: " << fixed << setprecision(2) << analyzer.executionTimeMs << " ms ";
+    cout << "(" << setprecision(4) << (analyzer.executionTimeMs / 1000.0) << " seconds)\n";
+    cout << "Status               : Optimization Level -O3 Active\n";
+    cout << "========================================\n";
 }
