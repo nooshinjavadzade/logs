@@ -12,10 +12,7 @@ public:
 
     void processEntry(const LogEntry& entry);
     void processInvalidLine();
-    
-    void printReport() const;
-    void printTimeDistribution() const;
-    void printSuspiciousActivity() const;
+    friend class Reporter;
 
 private:
     uint64_t totalRequests = 0;
@@ -24,8 +21,8 @@ private:
     std::unordered_set<uint32_t> uniqueIPs;
     std::unordered_map<uint32_t, uint64_t> suspiciousIPs;
     std::unordered_map<std::string, uint64_t> endpointCounts;
-    
+    static uint32_t parseIpToUint32(const std::string& ipStr);
     uint64_t hourlyRequests[24] = {0};
     
-    static uint32_t parseIpToUint32(const std::string& ipStr);
+    
 };
