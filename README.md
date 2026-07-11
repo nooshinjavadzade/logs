@@ -141,17 +141,15 @@ Malformed lines, incomplete entries, and concatenated log fragments are automati
 The application processes logs using standard C++ containers with minimal overhead, making it suitable for very large datasets while maintaining a small memory footprint.
 
 ---
-
 # Challenges and Lessons Learned
 
 ## Algorithmic Optimization
 
-The primary challenge was achieving high throughput while maintaining complete analytical accuracy.
+The biggest challenge was designing an efficient algorithm capable of analyzing hundreds of thousands of log entries while maintaining 100% accuracy and low memory consumption.
 
-The dataset contained intentionally corrupted entries, including malformed records and inline-concatenated log fragments. A naïve parser would either terminate unexpectedly or incorrectly shift tokens, resulting in invalid statistics.
+Several analyses, such as identifying suspicious IP addresses and counting repeated requests, required keeping track of a large number of unique IPs throughout the execution. A naïve solution based on repeated linear searches would have resulted in poor performance, while more complex data structures were unnecessary for the project.
 
-To solve this, the parsing logic was redesigned around optimized static parsing routines. Valid entries are isolated correctly, while malformed lines are redirected to a dedicated invalid-line counter. This approach ensures reliable statistics without sacrificing performance.
-
+To address this, I designed the analysis around standard C++ hash-based containers, allowing constant average-time lookups and updates while keeping memory usage reasonable. Each log entry is processed only once, enabling all statistics and anomaly detection to be computed in a single pass over the dataset. This approach achieved both high performance and exact analytical results without relying on external libraries or approximate algorithms.
 ## CMake and Project Organization
 
 Another significant challenge was learning CMake and organizing the project into a clean multi-directory structure.
@@ -161,8 +159,6 @@ Although initially unfamiliar with modern CMake workflows, building this project
 - Multi-file C++ projects
 - Header file organization
 - Source directory separation
-- Build configurations (Debug vs. Release)
-- Cross-platform project structure
 - Compiler optimization settings
 
 This experience resulted in a maintainable and portable project layout.
